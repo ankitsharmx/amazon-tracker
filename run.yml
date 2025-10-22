@@ -1,0 +1,30 @@
+name: Daily Amazon Price Tracker
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # ⏰ Runs every 6 hours
+  workflow_dispatch:        # Manual trigger option
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run the tracker
+        env:
+          TELEGRAM_LOW_TOKEN: ${{ secrets.TELEGRAM_LOW_TOKEN }}
+          TELEGRAM_MEDIUM_TOKEN: ${{ secrets.TELEGRAM_MEDIUM_TOKEN }}
+          TELEGRAM_HIGH_TOKEN: ${{ secrets.TELEGRAM_HIGH_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
